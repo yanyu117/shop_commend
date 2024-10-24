@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.IShopCarDao">
+    <insert id="saveByshopIdUserId">
+        insert into t_shop_car(num,shop_id,user_id)
+        values(#{param1},#{param2},#{param3})
+    </insert>
+    <resultMap id="userModel" type="com.briup.bean.User">
+        <id property="id" column="uid"></id>
+        <result property="nickName" column="nick_name"></result>
+        <result property="loginName" column="login_name"></result>
+        <result property="passwordMd5" column="password_md5"></result>
+        <result property="phone" column="phone"></result>
+        <result property="eMail" column="e_mail"></result>
+        <result property="address" column="address"></result>
+        <result property="isLock" column="is_lock"></result>
+    </resultMap>
+    <resultMap id="shopModel" type="Shop">
+        <id property="id" column="sid"></id>
+        <result property="name" column="name"></result>
+        <result property="selling_price" column="selling_price"></result>
+        <result property="price" column="price"></result>
+        <result property="info" column="info"></result>
+        <result property="intro" column="intro"></result>
+        <result property="img" column="img"></result>
+        <result property="store" column="store"></result>
+        <result property="stockNum" column="stock_num"></result>
+        <result property="discount" column="discount"></result>
+        <result property="discountPrice" column="discount_price"></result>
+        <result property="stat" column="stat"></result>
+        <result property="tags" column="tags"></result>
+        <result property="salesVolume" column="sales_volume"></result>
+        <result property="visitVolume" column="visit_volume"></result>
+    </resultMap>
+    <resultMap id="cartModel" type="ShopCar">
+        <id property="id" column="id"></id>
+        <result property="num" column="num"></result>
+        <association property="shop" resultMap="shopModel"></association>
+        <association property="user" resultMap="userModel"></association>
+    </resultMap>
+    <select id="findByShopIdAndUserId" resultMap="cartModel">
+        select c.id,c.num,
+        u.id uid,u.nick_name,u.login_name,u.password_md5,u.phone,u.e_mail,u.address,u.is_lock,
+        s.id sid,s.discount,s.discount_price,s.img,s.info,s.name,s.price,s.selling_price,s.stat,
+        s.stock_num,s.store,s.sales_volume,s.visit_volume,s.intro,s.tags
+        from t_shop_car c,t_user u,t_shop s
+        where c.user_id=u.id and c.shop_id=s.id and c.shop_id=#{param1} and c.user_id=#{param2}
+    </select>
+    <update id="updateShopcar">
+        update t_shop_car
+        set num=#{param1}
+        where id=#{param2}
+    </update>
+    <select id="findByUserId" parameterType="long" resultMap="cartModel">
+        select c.id,c.num,
+        u.id uid,u.nick_name,u.login_name,u.password_md5,u.phone,u.e_mail,u.address,u.is_lock,
+        s.id sid,s.discount,s.discount_price,s.img,s.info,s.name,s.price,s.selling_price,s.stat,
+        s.stock_num,s.store,s.sales_volume,s.visit_volume,s.intro,s.tags
+        from t_shop_car c,t_user u,t_shop s
+        where c.user_id=u.id and c.shop_id=s.id and c.user_id=#{id}
+    </select>
+
+    <select id="findShopCarByIds" parameterType="list" resultMap="cartModel">
+        select c.id,c.num,
+        u.id uid,u.nick_name,u.login_name,u.password_md5,u.phone,u.e_mail,u.address,u.is_lock,
+        s.id sid,s.discount,s.discount_price,s.img,s.info,s.name,s.price,s.selling_price,s.stat,
+        s.stock_num,s.store,s.sales_volume,s.visit_volume,s.intro,s.tags
+        from t_shop_car c,t_user u,t_shop s
+        where (c.shop_id=s.id and c.user_id=u.id)
+        <if test="list!=null">
+                and c.id in
+                <foreach collection="list" item="tempVal" open="(" close=")" separator=",">
+                    #{tempVal}
+                </foreach>
+        </if>
+    </select>
+    <delete id="deleteShopCarByIds" parameterType="list">
+        delete from t_shop_car
+        <if test="list!=null">
+            <where>
+                id in
+                <foreach collection="list" item="tempVal" open="(" close=")" separator=",">
+                    #{tempVal}
+                </foreach>
+            </where>
+        </if>
+    </delete>
+
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.IUserDao">
+    <resultMap id="saddrModel" type="com.briup.bean.ShippingAddress">
+        <id property="id" column="aid"></id>
+        <result property="name" column="name"></result>
+        <result property="address" column="saddress"></result>
+        <result property="phoneNum" column="phone_num"></result>
+        <result property="defaultValue" column="default_value"></result>
+    </resultMap>
+    <resultMap id="userModel" type="com.briup.bean.User">
+        <id property="id" column="id"></id>
+        <result property="nickName" column="nick_name"></result>
+        <result property="loginName" column="login_name"></result>
+        <result property="passwordMd5" column="password_md5"></result>
+        <result property="phone" column="phone"></result>
+        <result property="eMail" column="e_mail"></result>
+        <result property="address" column="address"></result>
+        <result property="isLock" column="is_lock"></result>
+        <collection property="addresses" resultMap="saddrModel"></collection>
+    </resultMap>
+    <select id="findByLoginName" parameterType="java.lang.String" resultMap="userModel">
+        select u.id,u.nick_name,u.login_name,u.password_md5,u.phone,u.e_mail,u.address,u.is_lock,
+        a.id as aid,a.name,a.address as saddress,a.phone_num,a.default_value
+        from t_user u left join t_shipping_address a  on u.id=a.user_id
+        where login_name=#{loginName}
+    </select>
+    <insert id="saveUser" parameterType="com.briup.bean.User"
+    useGeneratedKeys="true" keyProperty="id">
+        insert into t_user(address,e_mail,is_lock,login_name,nick_name,password_md5,phone)
+        values(#{address},#{eMail},#{isLock},#{loginName},#{nickName},#{passwordMd5},#{phone})
+    </insert>
+</mapper>

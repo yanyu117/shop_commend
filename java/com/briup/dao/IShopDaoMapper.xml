@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.IShopDao">
+    <resultMap id="cateModel" type="Category">
+        <id property="id" column="tid"></id>
+        <result property="name" column="tname"></result>
+        <result property="parentId" column="parent_id"></result>
+    </resultMap>
+    <resultMap id="shopModel" type="Shop">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="selling_price" column="selling_price"></result>
+        <result property="price" column="price"></result>
+        <result property="info" column="info"></result>
+        <result property="intro" column="intro"></result>
+        <result property="img" column="img"></result>
+        <result property="store" column="store"></result>
+        <result property="stockNum" column="stock_num"></result>
+        <result property="discount" column="discount"></result>
+        <result property="discountPrice" column="discount_price"></result>
+        <result property="stat" column="stat"></result>
+        <result property="tags" column="tags"></result>
+        <result property="salesVolume" column="sales_volume"></result>
+        <result property="visitVolume" column="visit_volume"></result>
+        <association property="category" resultMap="cateModel"></association>
+    </resultMap>
+    <select id="findByDiscountOrderBySalesVolumeDesc" resultMap="shopModel"
+    parameterType="boolean">
+        select s.id,s.discount,s.discount_price,s.img,s.info,s.name,s.price,s.selling_price,s.stat,
+        s.stock_num,s.store,s.sales_volume,s.visit_volume,s.intro,s.tags,
+        t.id as tid,t.name as tname,t.parent_id
+        from t_shop s,t_category t
+        where s.category_id=t.id and s.discount=#{discount}
+        order by s.sales_volume desc
+    </select>
+    <select id="findShopById" parameterType="long" resultMap="shopModel">
+        select s.id,s.discount,s.discount_price,s.img,s.info,s.name,s.price,s.selling_price,s.stat,
+        s.stock_num,s.store,s.sales_volume,s.visit_volume,s.intro,s.tags,
+        t.id as tid,t.name as tname,t.parent_id
+        from t_shop s,t_category t
+        where s.category_id=t.id and s.id=#{id}
+    </select>
+</mapper>

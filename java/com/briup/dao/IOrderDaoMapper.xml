@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.IOrderDao">
+    <insert id="saveOrder" parameterType="Order">
+        insert into t_order(id,shipping_address_id,user_id,create_date,shop_num,sum_price,status)
+        values(#{id},#{shippingAddress.id},#{user.id},#{createDate},#{shopNum},#{sumPrice},#{status})
+    </insert>
+    <resultMap id="userModel" type="com.briup.bean.User">
+        <id property="id" column="uid"></id>
+        <result property="nickName" column="nick_name"></result>
+        <result property="loginName" column="login_name"></result>
+        <result property="passwordMd5" column="password_md5"></result>
+        <result property="phone" column="phone"></result>
+        <result property="eMail" column="e_mail"></result>
+        <result property="address" column="address"></result>
+        <result property="isLock" column="is_lock"></result>
+    </resultMap>
+    <resultMap id="shopModel" type="Shop">
+        <id property="id" column="sid"></id>
+        <result property="name" column="sname"></result>
+        <result property="selling_price" column="selling_price"></result>
+        <result property="price" column="price"></result>
+        <result property="info" column="info"></result>
+        <result property="intro" column="intro"></result>
+        <result property="img" column="img"></result>
+        <result property="store" column="store"></result>
+        <result property="stockNum" column="stock_num"></result>
+        <result property="discount" column="discount"></result>
+        <result property="discountPrice" column="discount_price"></result>
+        <result property="stat" column="stat"></result>
+        <result property="tags" column="tags"></result>
+        <result property="salesVolume" column="sales_volume"></result>
+        <result property="visitVolume" column="visit_volume"></result>
+    </resultMap>
+    <resultMap id="saddrModel" type="com.briup.bean.ShippingAddress">
+        <id property="id" column="tid"></id>
+        <result property="name" column="tname"></result>
+        <result property="address" column="saddress"></result>
+        <result property="phoneNum" column="phone_num"></result>
+        <result property="defaultValue" column="default_value"></result>
+    </resultMap>
+    <resultMap id="orderItemModel" type="OrderItem">
+        <id property="id" column="mid"></id>
+        <result property="num" column="num"></result>
+        <association property="shop" resultMap="shopModel"></association>
+    </resultMap>
+    <resultMap id="orderModel" type="Order">
+        <id property="id" column="id"></id>
+        <result property="createDate" column="create_date"></result>
+        <result property="shopNum" column="shop_num"></result>
+        <result property="sumPrice" column="sum_price"></result>
+        <result property="status" column="status"></result>
+        <association property="user" resultMap="userModel"></association>
+        <association property="shippingAddress" resultMap="saddrModel"></association>
+        <collection property="orderItems" resultMap="orderItemModel"></collection>
+    </resultMap>
+    <select id="findOrderByOrderId" parameterType="java.lang.String" resultMap="orderModel">
+        select o.id,o.create_date,o.shop_num,o.sum_price,o.status,
+        u.id uid,u.nick_name,u.login_name,u.password_md5,u.phone,u.e_mail,u.address,u.is_lock,
+        t.id tid,t.address,t.phone_num,t.default_value,t.name tname,
+        m.id mid,m.num,
+        s.id sid,s.discount,s.discount_price,s.img,s.info,s.name sname,s.price,s.selling_price,s.stat,
+        s.stock_num,s.store,s.sales_volume,s.visit_volume,s.intro,s.tags
+        from t_order o,t_user u,t_shipping_address t,t_order_item m,t_shop s
+        where o.user_id=u.id and o.shipping_address_id=t.id and  o.id=m.order_id and
+        m.shop_id=s.id and o.id=#{order_id}
+    </select>
+    <update id="updateOrder" parameterType="Order">
+        update t_order
+        set status=#{status}
+        where id=#{id}
+    </update>
+</mapper>

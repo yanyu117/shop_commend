@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.ICategoryDao">
+    <resultMap id="cateModel" type="Category">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="parentId" column="parent_id"></result>
+    </resultMap>
+    <select id="findByParentIdIsNull" resultMap="cateModel">
+        select id,name,parent_id
+        from t_category
+        where parent_id is null
+    </select>
+    <select id="findByParentId" parameterType="long" resultMap="cateModel">
+        select id,name,parent_id
+        from t_category
+        where parent_id=#{id}
+    </select>
+</mapper>

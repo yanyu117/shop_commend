@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.dao.IShippingAddressDao">
+    <resultMap id="userModel" type="com.briup.bean.User">
+        <id property="id" column="uid"></id>
+        <result property="nickName" column="nick_name"></result>
+        <result property="loginName" column="login_name"></result>
+        <result property="passwordMd5" column="password_md5"></result>
+        <result property="phone" column="phone"></result>
+        <result property="eMail" column="e_mail"></result>
+        <result property="address" column="address"></result>
+        <result property="isLock" column="is_lock"></result>
+    </resultMap>
+    <resultMap id="saddrModel" type="com.briup.bean.ShippingAddress">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="address" column="saddress"></result>
+        <result property="phoneNum" column="phone_num"></result>
+        <result property="defaultValue" column="default_value"></result>
+        <association property="user" resultMap="userModel"></association>
+    </resultMap>
+    <select id="findByUserId" parameterType="long" resultMap="saddrModel">
+        select t.id,t.address,t.phone_num,t.default_value,t.name,
+        u.id uid,u.nick_name,u.login_name,u.password_md5,u.phone,u.e_mail,u.address,u.is_lock
+        from t_shipping_address t,t_user u
+        where t.user_id=u.id and t.user_id=#{userId}
+    </select>
+    <insert id="saveShippingAddress" parameterType="com.briup.bean.ShippingAddress">
+        insert into t_shipping_address(address,phone_num,user_id,default_value,name)
+        values(#{address},#{phoneNum},#{user.id},#{defaultValue},#{name})
+    </insert>
+</mapper>
