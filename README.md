@@ -54,11 +54,11 @@
 
     因为在实际项⽬开发中，没有办法去预料每⼀步job的结束时间也就没有办法⽴即开始下⼀job的计算，因此使⽤ ⼯作流将所有的job进⾏管理；
 
-###shop.conf 是flume程序
+### shop.conf 是flume程序
 
-###shop文件是 推荐算法的实现
+### shop文件是 推荐算法的实现
 
-###pop.xml 文件引入依赖，解决hadoop没有mysql的jar包而报错的问题
+### pop.xml 文件引入依赖，解决hadoop没有mysql的jar包而报错的问题
 
 
 
